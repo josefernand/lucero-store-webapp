@@ -8,7 +8,7 @@ export default function Navbar() {
     <div className="navbar bg-base-100">
       <div className="navbar-start"></div>
       <div className="navbar-center">
-        <Link className="btn btn-ghost text-xl" href="/">
+        <Link className="btn btn-ghost gap-0 text-xl" href="/">
           <LuceroStarIcon className="h-6 w-6" />
           <Image src={logo} alt="Lucero" height={24} className="h-6" />
         </Link>
