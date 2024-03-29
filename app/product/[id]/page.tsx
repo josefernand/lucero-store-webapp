@@ -16,27 +16,32 @@ export default async function ProductDetail({ params }: { params: { id: string }
 
   return (
     <>
-      <div className="group card card-compact overflow-hidden border bg-base-100 hover:border-neutral hover:border-opacity-20">
+      <div className="group card card-compact overflow-hidden border">
         <figure className="aspect-square">
           {product.imageUrls && product.imageUrls.length > 0 ? (
             <Image
               src={product.imageUrls?.[0]}
-              width={200}
-              height={200}
+              width={400}
+              height={400}
               alt={product.name}
               priority
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-base-200 text-base-content text-opacity-20">
+            <div className="flex h-full w-full items-center justify-center bg-base-200 text-base-content text-opacity-10">
               <ImageIcon className="h-12 w-12" />
             </div>
           )}
         </figure>
-        <div className="card-body gap-0">
-          <p className="mb-auto line-clamp-2 font-semibold">{product.name}</p>
-          <span className="mt-1 text-sm">{formatCurrency(product.price)}</span>
+        <div className="card-body gap-4 border-t">
+          {product.material && (
+            <span className="badge badge-ghost capitalize">{product.material}</span>
+          )}
+          <div>
+            <h2 className="card-title text-2xl">{product.name}</h2>
+            <span className="text-lg font-medium">{formatCurrency(product.price)}</span>
+          </div>
+          <p>{product.description}</p>
         </div>
-        <div className="absolute h-full w-full bg-neutral bg-opacity-0 group-hover:bg-opacity-10"></div>
       </div>
     </>
   );

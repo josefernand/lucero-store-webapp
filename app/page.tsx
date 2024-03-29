@@ -12,7 +12,7 @@ export default async function Home() {
   return (
     <>
       {products.length > 0 ? (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {products.map((product) => (
             <Link
               href={`/product/${product.id}`}
@@ -29,7 +29,7 @@ export default async function Home() {
                     priority
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-base-200 text-base-content text-opacity-20">
+                  <div className="flex h-full w-full items-center justify-center bg-base-200 text-base-content text-opacity-10">
                     <ImageIcon className="h-12 w-12" />
                   </div>
                 )}
