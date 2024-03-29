@@ -15,7 +15,7 @@ export default async function Home() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {products.map((product) => (
             <Link
-              href={`/products/${product.id}`}
+              href={`/product/${product.id}`}
               key={product.id}
               className="group card card-compact overflow-hidden border bg-base-100 hover:border-neutral hover:border-opacity-20"
             >
