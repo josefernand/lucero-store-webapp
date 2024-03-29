@@ -16,7 +16,7 @@ export default async function ProductDetail({ params }: { params: { id: string }
 
   return (
     <>
-      <div className="group card card-compact overflow-hidden border">
+      <div className="group card card-compact overflow-hidden border sm:card-side sm:card-normal">
         <figure className="aspect-square">
           {product.imageUrls && product.imageUrls.length > 0 ? (
             <Image
@@ -32,7 +32,7 @@ export default async function ProductDetail({ params }: { params: { id: string }
             </div>
           )}
         </figure>
-        <div className="card-body gap-4 border-t">
+        <div className="card-body gap-4 border-t sm:border-l sm:border-t-0">
           {product.material && (
             <span className="badge badge-ghost capitalize">{product.material}</span>
           )}
