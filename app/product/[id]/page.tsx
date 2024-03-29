@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   };
 }
 
-export default async function Product({ params }: { params: { id: string } }) {
+export default async function ProductDetail({ params }: { params: { id: string } }) {
   const { id } = params;
   const res = await fetch(`${process.env.API_BASE_URL}/products/${id}`, { cache: 'no-store' });
   const product: Product = await res.json();

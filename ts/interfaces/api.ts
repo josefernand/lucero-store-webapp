@@ -1,4 +1,4 @@
-import { Product, Supplier } from '@/ts';
+import { Product } from '@/ts';
 
 export interface ProductsResponse {
   products: Product[];
