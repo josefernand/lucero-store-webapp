@@ -1,3 +1,4 @@
+import { CartAddButton } from '@/components';
 import { formatCurrency } from '@/lib/utils';
 import { Product } from '@/ts';
 import { ImageIcon } from 'lucide-react';
@@ -43,6 +44,7 @@ export default async function ProductDetail({ params }: { params: { id: string }
             <span className="text-lg font-medium">{formatCurrency(product.price)}</span>
           </div>
           <p>{product.description}</p>
+          <CartAddButton product={product} />
         </div>
       </div>
     </>
