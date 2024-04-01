@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: '%s | Lucero',
     default: 'Lucero'
   },
-  description: 'Encontrá tu estrella en cada joya'
+  description: 'Encontrá tu estrella'
 };
 
 export default async function RootLayout({
