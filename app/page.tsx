@@ -5,7 +5,9 @@ import Image from 'next/image';
 import { GemIcon, ImageIcon } from 'lucide-react';
 
 export default async function Home() {
-  const res = await fetch(`${process.env.API_BASE_URL}/products`, { cache: 'no-store' });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products`, {
+    cache: 'no-store'
+  });
   const jsonRes: ProductsResponse = await res.json();
   const products: Product[] = jsonRes.products || [];
 
