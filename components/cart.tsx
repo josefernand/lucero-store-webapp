@@ -1,22 +1,29 @@
 'use client';
 
+import { formatCurrency } from '@/lib/utils';
 import { Product } from '@/ts';
-import { ShoppingCartIcon } from 'lucide-react';
+import { CartItem } from '@/ts/interfaces/cart';
+import { ImageIcon, MinusIcon, PlusIcon, ShoppingBagIcon, XIcon } from 'lucide-react';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 export default function Cart() {
+  const [cartItems, setCartItems] = useState([] as CartItem[]);
+  const [total, setTotal] = useState(0);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
     // Set initial count
-    const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
-    setCount(cartItems.length);
+    const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
+    setCount(products.length);
+    updateCart(products);
 
     // Listen for changes
     const handleCartEvent = (event: StorageEvent) => {
       if (event.key === 'cart') {
-        const cartItems = JSON.parse(event.newValue || '[]');
-        setCount(cartItems.length);
+        const products: Product[] = JSON.parse(event.newValue || '[]');
+        setCount(products.length);
+        updateCart(products);
       }
     };
 
@@ -24,30 +31,163 @@ export default function Cart() {
     return () => window.removeEventListener('storage', handleCartEvent);
   }, []);
 
-  const handleCartModal = () => {
+  const updateCart = (products: Product[]) => {
+    const cartItems = products.reduce((acc, product) => {
+      const existingItem = acc.find((item) => item.product.id === product.id);
+      if (existingItem) {
+        existingItem.quantity += 1;
+        existingItem.total = existingItem.product.price * existingItem.quantity;
+      } else {
+        acc.push({
+          product,
+          quantity: 1,
+          total: product.price
+        });
+      }
+      return acc;
+    }, [] as CartItem[]);
+    setCartItems(cartItems);
+    const total = cartItems.reduce((acc, item) => acc + item.total, 0);
+    setTotal(total);
+  };
+
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      showCartModal();
+    }
+  }, [cartItems]);
+
+  const showCartModal = () => {
     const modal = document.getElementById('cartModal') as HTMLDialogElement;
     modal.showModal();
   };
 
+  const closeCartModal = () => {
+    const modal = document.getElementById('cartModal') as HTMLDialogElement;
+    modal.close();
+  };
+
+  const handleRemoveFromCart = (index: number) => {
+    const updatedCart = [...cartItems];
+    updatedCart.splice(index, 1);
+    const products = updatedCart.map((item) => item.product);
+    localStorage.setItem('cart', JSON.stringify(products));
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'cart',
+        newValue: JSON.stringify(products)
+      })
+    );
+  };
+
+  const handleAddQuantity = (index: number, amount: number) => {
+    const selected = cartItems[index];
+    const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (amount > 0) {
+      products.push(selected.product);
+    } else {
+      const index = products.findIndex((product) => product.id === selected.product.id);
+      products.splice(index, 1);
+    }
+    localStorage.setItem('cart', JSON.stringify(products));
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'cart',
+        newValue: JSON.stringify(products)
+      })
+    );
+  };
+
   return (
     <>
-      <button className="btn btn-circle btn-ghost" onClick={handleCartModal}>
+      <button className="btn btn-circle btn-ghost" onClick={showCartModal}>
         <div className="indicator">
-          <ShoppingCartIcon className="h-6 w-6" />
+          <ShoppingBagIcon className="h-6 w-6" />
           {count > 0 && <span className="badge indicator-item badge-sm">{count}</span>}
         </div>
       </button>
-      <dialog id="cartModal" className="modal">
+      <dialog id="cartModal" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
-          <h3 className="text-lg font-bold">Hello!</h3>
-          <p className="py-4">Press ESC key or click the button below to close</p>
-          <div className="modal-action">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn">Close</button>
-            </form>
+          <button
+            className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+            onClick={closeCartModal}
+          >
+            ✕
+          </button>
+          <h3 className="mb-2 text-lg font-bold">Mi pedido</h3>
+          <div className="max-h-[420px] overflow-auto pt-4">
+            {cartItems.length > 0 ? (
+              <div className="flex flex-col gap-4">
+                {cartItems.map((item, index) => (
+                  <div key={item.product.id} className="flex gap-4">
+                    <div className="relative">
+                      <figure className="aspect-square h-24 overflow-hidden rounded-lg border border-neutral-300">
+                        {item.product.imageUrls && item.product.imageUrls.length > 0 ? (
+                          <Image
+                            src={item.product.imageUrls?.[0]}
+                            width={150}
+                            height={150}
+                            alt={item.product.name}
+                            priority
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-base-200 text-base-content text-opacity-10">
+                            <ImageIcon className="h-12 w-12" />
+                          </div>
+                        )}
+                      </figure>
+                      <button
+                        className="btn btn-circle btn-neutral btn-xs absolute -right-2 -top-2"
+                        onClick={() => handleRemoveFromCart(index)}
+                      >
+                        <XIcon className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <div className="mr-auto flex flex-col">
+                      <span className="line-clamp-2 text-sm font-semibold sm:text-base">
+                        {item.product.name}
+                      </span>
+                      <span className="text-sm text-neutral-500">
+                        {item.quantity} x {formatCurrency(item.product.price)}
+                      </span>
+                      <div className="join mt-2">
+                        <button
+                          className="btn join-item btn-xs border"
+                          onClick={() => handleAddQuantity(index, -1)}
+                        >
+                          <MinusIcon className="h-4 w-4" />
+                        </button>
+                        <span className="join-item border px-4">{item.quantity}</span>
+                        <button
+                          className="btn join-item btn-xs border"
+                          onClick={() => handleAddQuantity(index, 1)}
+                        >
+                          <PlusIcon className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <span className="text-base">{formatCurrency(item.total)}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="my-4">No hay productos en tu pedido</p>
+            )}
+          </div>
+          <div className="mt-2 flex justify-between rounded-lg bg-base-200 px-4 py-2 font-semibold">
+            <span>Total</span>
+            <span>{formatCurrency(total)}</span>
+          </div>
+          <div className="modal-action mt-2">
+            <button className="btn btn-neutral btn-block" disabled={cartItems.length === 0}>
+              <ShoppingBagIcon className="h-6 w-6" />
+              Realizar pedido
+            </button>
           </div>
         </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
       </dialog>
     </>
   );

@@ -19,7 +19,7 @@ export default function CartAddButton({ product }: { product: Product }) {
   return (
     <button className="btn btn-neutral" onClick={addToCart}>
       <PlusCircleIcon className="h-6 w-6" />
-      Agregar al carrito
+      Agregar
     </button>
   );
 }
