@@ -114,7 +114,7 @@ export default function Cart() {
           >
             ✕
           </button>
-          <h3 className="mb-2 text-lg font-bold">Mi pedido</h3>
+          <h3 className="mb-2 text-lg font-bold">Pedido</h3>
           <div className="max-h-[420px] overflow-auto pt-4">
             {cartItems.length > 0 ? (
               <div className="flex flex-col gap-4">
@@ -171,13 +171,15 @@ export default function Cart() {
                 ))}
               </div>
             ) : (
-              <p className="my-4">No hay productos en tu pedido</p>
+              <p className="mb-4">Todavia no hay nada en tu pedido.</p>
             )}
           </div>
-          <div className="mt-2 flex justify-between rounded-lg bg-base-200 px-4 py-2 font-semibold">
-            <span>Total</span>
-            <span>{formatCurrency(total)}</span>
-          </div>
+          {cartItems.length > 0 && (
+            <div className="mt-2 flex justify-between rounded-lg bg-base-200 px-4 py-2 font-semibold">
+              <span>Total</span>
+              <span>{formatCurrency(total)}</span>
+            </div>
+          )}
           <div className="modal-action mt-2">
             <button className="btn btn-neutral btn-block" disabled={cartItems.length === 0}>
               <ShoppingBagIcon className="h-6 w-6" />
