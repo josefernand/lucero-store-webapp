@@ -68,6 +68,18 @@ export default function Cart() {
     modal.close();
   };
 
+  const handleDeleteProduct = (id: string) => {
+    const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
+    const updatedCart = products.filter((product) => product.id !== id);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'cart',
+        newValue: JSON.stringify(updatedCart)
+      })
+    );
+  };
+
   const handleAddProduct = (product: Product) => {
     const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
     const updatedCart = [...products, product];
@@ -80,18 +92,13 @@ export default function Cart() {
     );
   };
 
-  const handleRemoveProduct = (id: string, removeAll: boolean = false) => {
+  const handleRemoveProduct = (id: string) => {
     const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
-    if (removeAll) {
-      const updatedCart = products.filter((product) => product.id !== id);
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
-    } else {
-      const index = products.findIndex((product) => product.id === id);
-      if (index > -1) {
-        products.splice(index, 1);
-      }
-      localStorage.setItem('cart', JSON.stringify(products));
+    const index = products.findIndex((product) => product.id === id);
+    if (index > -1) {
+      products.splice(index, 1);
     }
+    localStorage.setItem('cart', JSON.stringify(products));
     window.dispatchEvent(
       new StorageEvent('storage', {
         key: 'cart',
@@ -101,17 +108,14 @@ export default function Cart() {
   };
 
   const handleSendOrder = () => {
-    // First include a welcome message
-    let message = 'Hola Luero! 👋\n\n';
+    let message = 'Hola! 👋✨\n';
     message += 'Me gustaría hacer el siguiente pedido:\n\n';
-    // Create message from cart items including product id, name, quantity and total
     cartItems.forEach((item) => {
       message += `${item.product.id} - ${item.product.name} x ${item.quantity} = ${formatCurrency(
         item.total
       )}\n`;
     });
-    // Include total amount
-    message += `\nTotal: ${formatCurrency(total)}`;
+    message += `\n*Total: ${formatCurrency(total)}*`;
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
@@ -157,7 +161,7 @@ export default function Cart() {
                       </figure>
                       <button
                         className="btn btn-circle btn-neutral btn-xs absolute -right-2 -top-2"
-                        onClick={() => handleRemoveProduct(item.product.id, true)}
+                        onClick={() => handleDeleteProduct(item.product.id)}
                       >
                         <XIcon className="h-4 w-4" />
                       </button>
@@ -180,6 +184,7 @@ export default function Cart() {
                         <button
                           className="btn join-item btn-xs border"
                           onClick={() => handleAddProduct(item.product)}
+                          disabled={item.product.stock <= item.quantity}
                         >
                           <PlusIcon className="h-4 w-4" />
                         </button>
