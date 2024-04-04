@@ -4,7 +4,13 @@ import { WhatsAppIcon } from '@/components';
 import { formatCurrency } from '@/lib/utils';
 import { Product } from '@/ts';
 import { CartItem } from '@/ts/interfaces/cart';
-import { ChevronLeftIcon, ImageIcon } from 'lucide-react';
+import {
+  ChevronLeftIcon,
+  ImageIcon,
+  PrinterIcon,
+  ReceiptIcon,
+  ReceiptTextIcon
+} from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -62,6 +68,13 @@ export default function CheckoutPage() {
     window.open(whatsappUrl, '_blank');
   };
 
+  const handlePrintOrder = () => {
+    const message = createOrderMessage();
+    const printWindow = window.open('', '_blank');
+    printWindow?.document.write(`<pre>${message}</pre>`);
+    printWindow?.print();
+  };
+
   return (
     <>
       <div role="alert" className="alert items-start">
@@ -115,7 +128,7 @@ export default function CheckoutPage() {
         value={note}
         onChange={(e) => setNote(e.target.value)}
       ></textarea>
-      <div className="mt-2 flex flex-col">
+      <div className="mt-2 flex flex-col gap-2">
         <button
           className="btn btn-neutral btn-block"
           disabled={cartItems.length === 0}
@@ -124,7 +137,15 @@ export default function CheckoutPage() {
           <WhatsAppIcon className="h-6 w-6" />
           Enviar por WhatsApp
         </button>
-        <a href="/" className="btn btn-ghost btn-block mt-2">
+        <button
+          className="btn btn-block"
+          disabled={cartItems.length === 0}
+          onClick={handlePrintOrder}
+        >
+          <ReceiptTextIcon className="h-6 w-6" />
+          Imprimir pedido
+        </button>
+        <a href="/" className="btn btn-ghost btn-block">
           <ChevronLeftIcon className="h-6 w-6" />
           Volver
         </a>
