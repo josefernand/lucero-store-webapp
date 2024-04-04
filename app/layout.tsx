@@ -28,7 +28,6 @@ export default async function RootLayout({
     const guest: Guest = await res.json();
     displayPaywall = !guest.enabled;
   }
-
   return (
     <html lang="en">
       <body className={clsx(GeistSans.className, 'flex min-h-screen flex-col')}>

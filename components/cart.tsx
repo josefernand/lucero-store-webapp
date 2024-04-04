@@ -3,12 +3,10 @@
 import { formatCurrency } from '@/lib/utils';
 import { Product } from '@/ts';
 import { CartItem } from '@/ts/interfaces/cart';
-import { ImageIcon, MinusIcon, PlusIcon, SendIcon, ShoppingBagIcon, XIcon } from 'lucide-react';
+import { ImageIcon, SendIcon, ShoppingBagIcon, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { ShoppingBagEmptyIcon } from '.';
-
-const phoneNumber = process.env.NEXT_PUBLIC_LUCERO_PHONE;
+import { ShoppingBagEmptyIcon } from '@/components';
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([] as CartItem[]);
@@ -107,20 +105,6 @@ export default function Cart() {
     );
   };
 
-  const handleSendOrder = () => {
-    let message = 'Hola! 👋✨\n';
-    message += 'Me gustaría hacer el siguiente pedido:\n\n';
-    cartItems.forEach((item) => {
-      message += `${item.product.id} - ${item.product.name} x ${item.quantity} = ${formatCurrency(
-        item.total
-      )}\n`;
-    });
-    message += `\n*Total: ${formatCurrency(total)}*`;
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
-  };
-
   return (
     <>
       <button className="btn btn-circle btn-ghost" onClick={showCartModal}>
@@ -205,14 +189,10 @@ export default function Cart() {
             </div>
           )}
           <div className="modal-action mt-2">
-            <button
-              className="btn btn-neutral btn-block"
-              disabled={cartItems.length === 0}
-              onClick={handleSendOrder}
-            >
+            <a href="/checkout" className="btn btn-neutral btn-block">
               <SendIcon className="h-6 w-6" />
               Enviar pedido
-            </button>
+            </a>
           </div>
         </div>
         <form method="dialog" className="modal-backdrop">
