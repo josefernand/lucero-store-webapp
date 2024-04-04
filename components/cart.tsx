@@ -13,16 +13,13 @@ export default function Cart() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    // Set initial count
     const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
     setCount(products.length);
     updateCart(products);
 
-    // Listen for changes
     const handleCartEvent = (event: StorageEvent) => {
       if (event.key === 'cart') {
         const products: Product[] = JSON.parse(event.newValue || '[]');
-        setCount(products.length);
         updateCart(products);
       }
     };
@@ -32,6 +29,7 @@ export default function Cart() {
   }, []);
 
   const updateCart = (products: Product[]) => {
+    setCount(products.length);
     const cartItems = products.reduce((acc, product) => {
       const existingItem = acc.find((item) => item.product.id === product.id);
       if (existingItem) {
@@ -67,29 +65,30 @@ export default function Cart() {
     modal.close();
   };
 
-  const handleRemoveFromCart = (index: number) => {
-    const updatedCart = [...cartItems];
-    updatedCart.splice(index, 1);
-    const products = updatedCart.map((item) => item.product);
-    localStorage.setItem('cart', JSON.stringify(products));
+  const handleAddProduct = (product: Product) => {
+    const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
+    const updatedCart = [...products, product];
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
     window.dispatchEvent(
       new StorageEvent('storage', {
         key: 'cart',
-        newValue: JSON.stringify(products)
+        newValue: JSON.stringify(updatedCart)
       })
     );
   };
 
-  const handleAddQuantity = (index: number, amount: number) => {
-    const selected = cartItems[index];
+  const handleRemoveProduct = (id: string, removeAll: boolean = false) => {
     const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
-    if (amount > 0) {
-      products.push(selected.product);
+    if (removeAll) {
+      const updatedCart = products.filter((product) => product.id !== id);
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
     } else {
-      const index = products.findIndex((product) => product.id === selected.product.id);
-      products.splice(index, 1);
+      const index = products.findIndex((product) => product.id === id);
+      if (index > -1) {
+        products.splice(index, 1);
+      }
+      localStorage.setItem('cart', JSON.stringify(products));
     }
-    localStorage.setItem('cart', JSON.stringify(products));
     window.dispatchEvent(
       new StorageEvent('storage', {
         key: 'cart',
@@ -138,7 +137,7 @@ export default function Cart() {
                       </figure>
                       <button
                         className="btn btn-circle btn-neutral btn-xs absolute -right-2 -top-2"
-                        onClick={() => handleRemoveFromCart(index)}
+                        onClick={() => handleRemoveProduct(item.product.id, true)}
                       >
                         <XIcon className="h-4 w-4" />
                       </button>
@@ -153,14 +152,14 @@ export default function Cart() {
                       <div className="join mt-2">
                         <button
                           className="btn join-item btn-xs border"
-                          onClick={() => handleAddQuantity(index, -1)}
+                          onClick={() => handleRemoveProduct(item.product.id)}
                         >
                           <MinusIcon className="h-4 w-4" />
                         </button>
                         <span className="join-item border px-4">{item.quantity}</span>
                         <button
                           className="btn join-item btn-xs border"
-                          onClick={() => handleAddQuantity(index, 1)}
+                          onClick={() => handleAddProduct(item.product)}
                         >
                           <PlusIcon className="h-4 w-4" />
                         </button>
