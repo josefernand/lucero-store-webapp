@@ -144,12 +144,12 @@ export default function Cart() {
                 {cartItems.map((item) => (
                   <div key={item.product.id} className="flex gap-4">
                     <div className="relative">
-                      <figure className="aspect-square h-24 overflow-hidden rounded-lg border border-neutral-300">
+                      <figure className="aspect-square h-20 overflow-hidden rounded-lg border border-neutral-300">
                         {item.product.imageUrls && item.product.imageUrls.length > 0 ? (
                           <Image
                             src={item.product.imageUrls?.[0]}
-                            width={150}
-                            height={150}
+                            width={120}
+                            height={120}
                             alt={item.product.name}
                             priority
                           />
@@ -166,31 +166,28 @@ export default function Cart() {
                         <XIcon className="h-4 w-4" />
                       </button>
                     </div>
-                    <div className="mr-auto flex flex-col">
+                    <div className="mr-auto flex flex-col gap-1">
                       <span className="line-clamp-2 text-sm font-semibold sm:text-base">
                         {item.product.name}
                       </span>
-                      <span className="text-sm text-neutral-500">
-                        {item.quantity} x {formatCurrency(item.product.price)}
-                      </span>
-                      <div className="join mt-2">
+                      <div className="flex items-baseline self-start rounded-full border">
                         <button
-                          className="btn join-item btn-xs border"
+                          className="rounded-l-full border-r px-2 hover:bg-neutral-200 disabled:opacity-50"
                           onClick={() => handleRemoveProduct(item.product.id)}
                         >
-                          <MinusIcon className="h-4 w-4" />
+                          -
                         </button>
-                        <span className="join-item border px-4">{item.quantity}</span>
+                        <span className="w-8 px-2 text-center text-sm">{item.quantity}</span>
                         <button
-                          className="btn join-item btn-xs border"
+                          className="rounded-r-full border-l px-2 hover:bg-neutral-200 disabled:bg-neutral-300 disabled:opacity-50"
                           onClick={() => handleAddProduct(item.product)}
                           disabled={item.product.stock <= item.quantity}
                         >
-                          <PlusIcon className="h-4 w-4" />
+                          +
                         </button>
                       </div>
                     </div>
-                    <span className="text-base">{formatCurrency(item.total)}</span>
+                    <span className="text-sm">{formatCurrency(item.total)}</span>
                   </div>
                 ))}
               </div>
