@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import clsx from 'clsx';
-import { Footer, Navbar } from '@/components';
+import { Footer, Navbar, Paywall } from '@/components';
 import './globals.css';
-import Paywall from '@/components/paywall';
 import { cookies } from 'next/headers';
 import { Guest } from '@/ts';
 

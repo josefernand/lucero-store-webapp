@@ -3,9 +3,12 @@
 import { formatCurrency } from '@/lib/utils';
 import { Product } from '@/ts';
 import { CartItem } from '@/ts/interfaces/cart';
-import { ImageIcon, MinusIcon, PlusIcon, ShoppingBagIcon, XIcon } from 'lucide-react';
+import { ImageIcon, MinusIcon, PlusIcon, SendIcon, ShoppingBagIcon, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { ShoppingBagEmptyIcon } from '.';
+
+const phoneNumber = process.env.NEXT_PUBLIC_LUCERO_PHONE;
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([] as CartItem[]);
@@ -97,6 +100,23 @@ export default function Cart() {
     );
   };
 
+  const handleSendOrder = () => {
+    // First include a welcome message
+    let message = 'Hola Luero! 👋\n\n';
+    message += 'Me gustaría hacer el siguiente pedido:\n\n';
+    // Create message from cart items including product id, name, quantity and total
+    cartItems.forEach((item) => {
+      message += `${item.product.id} - ${item.product.name} x ${item.quantity} = ${formatCurrency(
+        item.total
+      )}\n`;
+    });
+    // Include total amount
+    message += `\nTotal: ${formatCurrency(total)}`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <>
       <button className="btn btn-circle btn-ghost" onClick={showCartModal}>
@@ -114,10 +134,10 @@ export default function Cart() {
             ✕
           </button>
           <h3 className="mb-2 text-lg font-bold">Pedido</h3>
-          <div className="max-h-[420px] overflow-auto pt-4">
+          <>
             {cartItems.length > 0 ? (
-              <div className="flex flex-col gap-4">
-                {cartItems.map((item, index) => (
+              <div className="flex max-h-[420px] flex-col gap-4 overflow-auto pt-4">
+                {cartItems.map((item) => (
                   <div key={item.product.id} className="flex gap-4">
                     <div className="relative">
                       <figure className="aspect-square h-24 overflow-hidden rounded-lg border border-neutral-300">
@@ -170,19 +190,26 @@ export default function Cart() {
                 ))}
               </div>
             ) : (
-              <p className="mb-4">Todavia no hay nada en tu pedido.</p>
+              <div className="my-4 flex items-center gap-2 rounded-lg bg-base-300 px-4 py-2">
+                <ShoppingBagEmptyIcon className="h-6 w-6" />
+                <span>Todavía no hay nada en tu pedido.</span>
+              </div>
             )}
-          </div>
+          </>
           {cartItems.length > 0 && (
-            <div className="mt-2 flex justify-between rounded-lg bg-base-200 px-4 py-2 font-semibold">
+            <div className="my-4 flex justify-between rounded-lg bg-base-300 px-4 py-2 font-semibold">
               <span>Total</span>
               <span>{formatCurrency(total)}</span>
             </div>
           )}
           <div className="modal-action mt-2">
-            <button className="btn btn-neutral btn-block" disabled={cartItems.length === 0}>
-              <ShoppingBagIcon className="h-6 w-6" />
-              Realizar pedido
+            <button
+              className="btn btn-neutral btn-block"
+              disabled={cartItems.length === 0}
+              onClick={handleSendOrder}
+            >
+              <SendIcon className="h-6 w-6" />
+              Enviar pedido
             </button>
           </div>
         </div>

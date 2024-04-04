@@ -6,7 +6,7 @@ import { GemIcon, ImageIcon } from 'lucide-react';
 import clsx from 'clsx';
 
 export default async function Home() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products?available=true`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/products`, {
     cache: 'no-store'
   });
   const jsonRes: ProductsResponse = await res.json();
