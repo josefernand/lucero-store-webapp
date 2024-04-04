@@ -4,7 +4,7 @@ import { WhatsAppIcon } from '@/components';
 import { formatCurrency } from '@/lib/utils';
 import { Product } from '@/ts';
 import { CartItem } from '@/ts/interfaces/cart';
-import { ChevronLeftIcon, ImageIcon, InfoIcon, SendIcon } from 'lucide-react';
+import { ChevronLeftIcon, ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -60,13 +60,6 @@ export default function CheckoutPage() {
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
-  };
-
-  const handleSendByMail = () => {
-    const message = createOrderMessage();
-    const encodedMessage = encodeURIComponent(message);
-    const mailToUrl = `mailto:?subject=Pedido&body=${encodedMessage}`;
-    window.location.href = mailToUrl;
   };
 
   return (
@@ -130,14 +123,6 @@ export default function CheckoutPage() {
         >
           <WhatsAppIcon className="h-6 w-6" />
           Enviar por WhatsApp
-        </button>
-        <button
-          className="btn btn-block mt-2"
-          disabled={cartItems.length === 0}
-          onClick={handleSendByMail}
-        >
-          <SendIcon className="h-6 w-6" />
-          Enviar por email
         </button>
         <a href="/" className="btn btn-ghost btn-block mt-2">
           <ChevronLeftIcon className="h-6 w-6" />
