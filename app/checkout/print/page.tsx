@@ -1,11 +1,15 @@
 'use client';
 
-import { useCart } from '@/hooks';
+import { useCart } from '@/context/cart-context';
 import { formatCurrency } from '@/lib/utils';
+import { CartItem } from '@/ts';
 import { useEffect } from 'react';
 
 export default function CheckoutPrintPage() {
-  const { loading, cartItems, cartTotal } = useCart();
+  const {
+    state: { items, total, loading }
+  } = useCart();
+
   const dateTime = new Date().toLocaleString('es-AR');
   const guest = document.cookie.split('; ').find((row) => row.startsWith('guest='));
   const tel = guest?.split('=')[1] || 'No disponible';
@@ -22,14 +26,12 @@ export default function CheckoutPrintPage() {
       <p className="text-center text-sm text-gray-500">Fecha: {dateTime}</p>
       <p className="text-center text-sm text-gray-500">Telefono: {tel}</p>
       <h1 className="my-4 font-semibold">Pedido</h1>
+
       <div>
-        {cartItems.map((item) => (
-          <div
-            key={item.product.id}
-            className="mb-2 flex items-start justify-between gap-2 text-sm"
-          >
-            <div>
-              {item.quantity}x {item.product.name}
+        {items.map((item) => (
+          <div key={item.product.id} className="mb-2 flex items-start gap-2 text-sm">
+            <div className="mr-auto">
+              {item.quantity} {item.product.name}
             </div>
             <div>{formatCurrency(item.product.price)}</div>
           </div>
@@ -37,7 +39,7 @@ export default function CheckoutPrintPage() {
       </div>
       <div className="my-4 flex items-center justify-between border-t border-dashed pt-2 font-semibold">
         <div>Total</div>
-        <div>{formatCurrency(cartTotal)}</div>
+        <div>{formatCurrency(total)}</div>
       </div>
     </div>
   );

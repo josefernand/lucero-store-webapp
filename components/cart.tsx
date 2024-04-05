@@ -1,60 +1,17 @@
 'use client';
 
 import { formatCurrency } from '@/lib/utils';
-import { Product } from '@/ts';
-import { CartItem } from '@/ts/interfaces/cart';
+import { ActionType, Product } from '@/ts';
 import { ImageIcon, SendIcon, ShoppingBagIcon, XIcon } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 import { ShoppingBagEmptyIcon } from '@/components';
+import { useCart } from '@/context/cart-context';
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState([] as CartItem[]);
-  const [total, setTotal] = useState(0);
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
-    setCount(products.length);
-    updateCart(products);
-
-    const handleCartEvent = (event: StorageEvent) => {
-      if (event.key === 'cart') {
-        const products: Product[] = JSON.parse(event.newValue || '[]');
-        updateCart(products);
-      }
-    };
-
-    window.addEventListener('storage', handleCartEvent);
-    return () => window.removeEventListener('storage', handleCartEvent);
-  }, []);
-
-  const updateCart = (products: Product[]) => {
-    setCount(products.length);
-    const cartItems = products.reduce((acc, product) => {
-      const existingItem = acc.find((item) => item.product.id === product.id);
-      if (existingItem) {
-        existingItem.quantity += 1;
-        existingItem.total = existingItem.product.price * existingItem.quantity;
-      } else {
-        acc.push({
-          product,
-          quantity: 1,
-          total: product.price
-        });
-      }
-      return acc;
-    }, [] as CartItem[]);
-    setCartItems(cartItems);
-    const total = cartItems.reduce((acc, item) => acc + item.total, 0);
-    setTotal(total);
-  };
-
-  useEffect(() => {
-    if (cartItems.length > 0) {
-      showCartModal();
-    }
-  }, [cartItems]);
+  const {
+    state: { items: cartItems, total, count },
+    dispatch
+  } = useCart();
 
   const showCartModal = () => {
     const modal = document.getElementById('cartModal') as HTMLDialogElement;
@@ -66,43 +23,16 @@ export default function Cart() {
     modal.close();
   };
 
-  const handleDeleteProduct = (id: string) => {
-    const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
-    const updatedCart = products.filter((product) => product.id !== id);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    window.dispatchEvent(
-      new StorageEvent('storage', {
-        key: 'cart',
-        newValue: JSON.stringify(updatedCart)
-      })
-    );
-  };
-
   const handleAddProduct = (product: Product) => {
-    const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
-    const updatedCart = [...products, product];
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    window.dispatchEvent(
-      new StorageEvent('storage', {
-        key: 'cart',
-        newValue: JSON.stringify(updatedCart)
-      })
-    );
+    dispatch({ type: ActionType.ADD_TO_CART, payload: product });
   };
 
   const handleRemoveProduct = (id: string) => {
-    const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
-    const index = products.findIndex((product) => product.id === id);
-    if (index > -1) {
-      products.splice(index, 1);
-    }
-    localStorage.setItem('cart', JSON.stringify(products));
-    window.dispatchEvent(
-      new StorageEvent('storage', {
-        key: 'cart',
-        newValue: JSON.stringify(products)
-      })
-    );
+    dispatch({ type: ActionType.REMOVE_FROM_CART, payload: { id } });
+  };
+
+  const handleDeleteProduct = (id: string) => {
+    dispatch({ type: ActionType.REMOVE_ALL_FROM_CART, payload: { id } });
   };
 
   return (
@@ -128,7 +58,7 @@ export default function Cart() {
                 {cartItems.map((item) => (
                   <div key={item.product.id} className="flex gap-4">
                     <div className="relative">
-                      <figure className="aspect-square h-20 overflow-hidden rounded-lg border border-neutral-300">
+                      <figure className="flex aspect-square h-20 items-center justify-center overflow-hidden rounded-lg border border-neutral-300">
                         {item.product.imageUrls && item.product.imageUrls.length > 0 ? (
                           <Image
                             src={item.product.imageUrls?.[0]}

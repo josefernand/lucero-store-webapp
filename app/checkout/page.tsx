@@ -1,7 +1,7 @@
 'use client';
 
 import { WhatsAppIcon } from '@/components';
-import { useCart } from '@/hooks';
+import { useCart } from '@/context/cart-context';
 import { formatCurrency } from '@/lib/utils';
 import clsx from 'clsx';
 import { ChevronLeftIcon, ImageIcon, ReceiptTextIcon } from 'lucide-react';
@@ -12,7 +12,9 @@ import { useState } from 'react';
 const phoneNumber = process.env.NEXT_PUBLIC_LUCERO_PHONE;
 
 export default function CheckoutPage() {
-  const { cartItems, cartTotal } = useCart();
+  const {
+    state: { items: cartItems, total }
+  } = useCart();
   const [note, setNote] = useState('');
 
   const createOrderMessage = () => {
@@ -23,7 +25,7 @@ export default function CheckoutPage() {
         item.total
       )}\n`;
     });
-    message += `\n*Total: ${formatCurrency(cartTotal)}*`;
+    message += `\n*Total: ${formatCurrency(total)}*`;
     if (note) {
       message += `\n\n*Nota:* ${note}`;
     }
@@ -50,7 +52,7 @@ export default function CheckoutPage() {
         {cartItems.map((item) => (
           <div key={item.product.id} className="flex gap-4">
             <div className="relative">
-              <figure className="aspect-square h-20 overflow-hidden rounded-lg border border-neutral-300">
+              <figure className="flex aspect-square h-20 items-center justify-center overflow-hidden rounded-lg border border-neutral-300">
                 {item.product.imageUrls && item.product.imageUrls.length > 0 ? (
                   <Image
                     src={item.product.imageUrls?.[0]}
@@ -81,7 +83,7 @@ export default function CheckoutPage() {
 
       <div className="my-4 flex justify-between rounded-lg bg-base-300 px-4 py-2 font-semibold">
         <span>Total</span>
-        <span>{formatCurrency(cartTotal)}</span>
+        <span>{formatCurrency(total)}</span>
       </div>
       <textarea
         className="textarea textarea-bordered w-full"
