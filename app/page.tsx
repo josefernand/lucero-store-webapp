@@ -4,6 +4,7 @@ import { formatCurrency } from '@/lib/utils';
 import Image from 'next/image';
 import { GemIcon, ImageIcon } from 'lucide-react';
 import clsx from 'clsx';
+import { Footer, Navbar } from '@/components';
 
 export default async function Home() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/products`, {
@@ -14,54 +15,61 @@ export default async function Home() {
 
   return (
     <>
-      {products.length > 0 ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {products.map((product) => (
-            <Link
-              href={`/product/${product.id}`}
-              key={product.id}
-              className="group card card-compact overflow-hidden border bg-base-100 hover:border-neutral hover:border-opacity-20"
-            >
-              <figure className="relative aspect-square">
-                {product.imageUrls && product.imageUrls.length > 0 ? (
-                  <Image
-                    src={product.imageUrls?.[0]}
-                    width={200}
-                    height={200}
-                    alt={product.name}
-                    priority
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-base-200 text-base-content text-opacity-10">
-                    <ImageIcon className="h-12 w-12" />
-                  </div>
-                )}
-                {product.material && (
-                  <span
-                    className={clsx('badge badge-ghost absolute left-2 top-2 text-xs capitalize', {
-                      'bg-neutral-300': product.material === Material.STEEL
-                    })}
-                  >
-                    {product.material}
-                  </span>
-                )}
-              </figure>
-              <div className="flex flex-1 flex-col justify-between gap-0 p-3">
-                <p className="line-clamp-2 text-sm font-semibold">{product.name}</p>
-                <span className="mt-1 text-sm">{formatCurrency(product.price)}</span>
-              </div>
-              <div className="absolute h-full w-full bg-neutral bg-opacity-0 group-hover:bg-opacity-10"></div>
-            </Link>
-          ))}
-        </div>
-      ) : (
-        <div role="alert" className="alert">
-          <GemIcon className="h-6 w-6" />
-          <span>
-            Oops! Parece que este catalogo aún no tiene nada. Es hora de mostrar nuestro brillo!
-          </span>
-        </div>
-      )}
+      <Navbar />
+      <main className="container mx-auto max-w-3xl flex-1 px-4 pb-12">
+        {products.length > 0 ? (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {products.map((product) => (
+              <Link
+                href={`/product/${product.id}`}
+                key={product.id}
+                className="group card card-compact overflow-hidden border bg-base-100 hover:border-neutral hover:border-opacity-20"
+              >
+                <figure className="relative aspect-square">
+                  {product.imageUrls && product.imageUrls.length > 0 ? (
+                    <Image
+                      src={product.imageUrls?.[0]}
+                      width={200}
+                      height={200}
+                      alt={product.name}
+                      priority
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-base-200 text-base-content text-opacity-10">
+                      <ImageIcon className="h-12 w-12" />
+                    </div>
+                  )}
+                  {product.material && (
+                    <span
+                      className={clsx(
+                        'badge badge-ghost absolute left-2 top-2 text-xs capitalize',
+                        {
+                          'bg-neutral-300': product.material === Material.STEEL
+                        }
+                      )}
+                    >
+                      {product.material}
+                    </span>
+                  )}
+                </figure>
+                <div className="flex flex-1 flex-col justify-between gap-0 p-3">
+                  <p className="line-clamp-2 text-sm font-semibold">{product.name}</p>
+                  <span className="mt-1 text-sm">{formatCurrency(product.price)}</span>
+                </div>
+                <div className="absolute h-full w-full bg-neutral bg-opacity-0 group-hover:bg-opacity-10"></div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div role="alert" className="alert">
+            <GemIcon className="h-6 w-6" />
+            <span>
+              Oops! Parece que este catalogo aún no tiene nada. Es hora de mostrar nuestro brillo!
+            </span>
+          </div>
+        )}
+      </main>
+      <Footer />
     </>
   );
 }

@@ -1,50 +1,19 @@
 'use client';
 
 import { WhatsAppIcon } from '@/components';
+import { useCart } from '@/hooks';
 import { formatCurrency } from '@/lib/utils';
-import { Product } from '@/ts';
-import { CartItem } from '@/ts/interfaces/cart';
-import {
-  ChevronLeftIcon,
-  ImageIcon,
-  PrinterIcon,
-  ReceiptIcon,
-  ReceiptTextIcon
-} from 'lucide-react';
+import clsx from 'clsx';
+import { ChevronLeftIcon, ImageIcon, ReceiptTextIcon } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useState } from 'react';
 
 const phoneNumber = process.env.NEXT_PUBLIC_LUCERO_PHONE;
 
 export default function CheckoutPage() {
-  const [cartItems, setCartItems] = useState([] as CartItem[]);
-  const [total, setTotal] = useState(0);
+  const { cartItems, cartTotal } = useCart();
   const [note, setNote] = useState('');
-
-  useEffect(() => {
-    const products: Product[] = JSON.parse(localStorage.getItem('cart') || '[]');
-    updateOrder(products);
-  }, []);
-
-  const updateOrder = (products: Product[]) => {
-    const cartItems = products.reduce((acc, product) => {
-      const existingItem = acc.find((item) => item.product.id === product.id);
-      if (existingItem) {
-        existingItem.quantity += 1;
-        existingItem.total = existingItem.product.price * existingItem.quantity;
-      } else {
-        acc.push({
-          product,
-          quantity: 1,
-          total: product.price
-        });
-      }
-      return acc;
-    }, [] as CartItem[]);
-    setCartItems(cartItems);
-    const total = cartItems.reduce((acc, item) => acc + item.total, 0);
-    setTotal(total);
-  };
 
   const createOrderMessage = () => {
     let message = 'Hola! 👋✨\n';
@@ -54,7 +23,7 @@ export default function CheckoutPage() {
         item.total
       )}\n`;
     });
-    message += `\n*Total: ${formatCurrency(total)}*`;
+    message += `\n*Total: ${formatCurrency(cartTotal)}*`;
     if (note) {
       message += `\n\n*Nota:* ${note}`;
     }
@@ -66,13 +35,6 @@ export default function CheckoutPage() {
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
-  };
-
-  const handlePrintOrder = () => {
-    const message = createOrderMessage();
-    const printWindow = window.open('', '_blank');
-    printWindow?.document.write(`<pre>${message}</pre>`);
-    printWindow?.print();
   };
 
   return (
@@ -119,7 +81,7 @@ export default function CheckoutPage() {
 
       <div className="my-4 flex justify-between rounded-lg bg-base-300 px-4 py-2 font-semibold">
         <span>Total</span>
-        <span>{formatCurrency(total)}</span>
+        <span>{formatCurrency(cartTotal)}</span>
       </div>
       <textarea
         className="textarea textarea-bordered w-full"
@@ -137,14 +99,15 @@ export default function CheckoutPage() {
           <WhatsAppIcon className="h-6 w-6" />
           Enviar por WhatsApp
         </button>
-        <button
-          className="btn btn-block"
-          disabled={cartItems.length === 0}
-          onClick={handlePrintOrder}
+        <Link
+          href="/checkout/print"
+          className={clsx('btn btn-block', { 'btn-disabled': cartItems.length === 0 })}
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <ReceiptTextIcon className="h-6 w-6" />
           Imprimir pedido
-        </button>
+        </Link>
         <a href="/" className="btn btn-ghost btn-block">
           <ChevronLeftIcon className="h-6 w-6" />
           Volver

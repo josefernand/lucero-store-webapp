@@ -1,15 +1,9 @@
-'use client';
-
 import Link from 'next/link';
 import { Cart, LuceroStarIcon } from '@/components';
 import logo from '@/public/lucero.svg';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
 
-export default function Navbar() {
-  const parthname = usePathname();
-  const showCart = parthname !== '/checkout';
-
+export default function Navbar({ showCart = true }: { showCart?: boolean }) {
   return (
     <>
       <div className="navbar bg-base-100">
