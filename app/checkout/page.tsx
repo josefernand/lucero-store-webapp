@@ -55,13 +55,13 @@ export default function CheckoutPage() {
     <>
       {!orderSent && (
         <>
+          <h3 className="mb-2 mt-4 text-lg font-bold">Revisá tu pedido</h3>
           <div role="alert" className="alert items-start">
             <span className="text-start text-sm">
-              Te recordamos que la disponibilidad de los productos puede cambiar. No te preocupes,
-              te vamos a contactar rapido para confirmar tu pedido. Gracias!
+              Una vez que envies el pedido te vamos a confirmar la disponibilidad de los productos
+              antes de que realices el pago. Gracias!
             </span>
           </div>
-          <h3 className="mb-2 mt-4 text-lg font-bold">Revisá tu pedido</h3>
           <div className="flex flex-col gap-4 pt-4">
             {loading && (
               <div className="flex gap-4">
