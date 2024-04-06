@@ -1,7 +1,7 @@
 'use client';
 
 import { ActionType, CartState, Product } from '@/ts';
-import { createContext, useReducer, useContext, useEffect, useState } from 'react';
+import { createContext, useReducer, useContext, useEffect } from 'react';
 
 // Define the action types
 type Action =
@@ -10,7 +10,8 @@ type Action =
   | { type: ActionType.REMOVE_FROM_CART; payload: { id: string } }
   | { type: ActionType.REMOVE_ALL_FROM_CART; payload: { id: string } }
   | { type: ActionType.CLEAR_CART }
-  | { type: ActionType.SHOW_CART; payload: boolean };
+  | { type: ActionType.SHOW_CART; payload: boolean }
+  | { type: ActionType.SEND_ORDER };
 
 // Define the initial state
 const initialState: CartState = {
@@ -85,15 +86,22 @@ const cartReducer = (state: CartState, action: Action): CartState => {
       };
     }
     case ActionType.CLEAR_CART:
-      console.log('clearing cart');
       return {
         ...initialState,
-        loading: false
+        loading: false,
+        sent: false,
+        showCart: false
       };
     case ActionType.SHOW_CART:
       return {
         ...state,
         showCart: action.payload
+      };
+    case ActionType.SEND_ORDER:
+      return {
+        ...state,
+        sent: true,
+        showCart: false
       };
     default:
       return state;

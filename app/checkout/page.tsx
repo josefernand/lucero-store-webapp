@@ -8,17 +8,16 @@ import clsx from 'clsx';
 import { ChevronLeftIcon, ImageIcon, ReceiptTextIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const phoneNumber = process.env.NEXT_PUBLIC_LUCERO_PHONE;
 
 export default function CheckoutPage() {
   const {
-    state: { items: cartItems, total, loading },
+    state: { items: cartItems, total, loading, sent: orderSent },
     dispatch
   } = useCart();
   const [note, setNote] = useState('');
-  const [orderSent, setOrderSent] = useState(false);
 
   const createOrderMessage = () => {
     let message = 'Hola! 👋✨\n';
@@ -40,23 +39,15 @@ export default function CheckoutPage() {
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
-    setOrderSent(true);
+    dispatch({ type: ActionType.SEND_ORDER });
   };
-
-  useEffect(() => {
-    return () => {
-      if (orderSent) {
-        dispatch({ type: ActionType.CLEAR_CART });
-      }
-    };
-  }, [orderSent, dispatch]);
 
   return (
     <>
       {!orderSent && (
         <>
-          <h3 className="mb-2 mt-4 text-lg font-bold">Revisá tu pedido</h3>
-          <div role="alert" className="alert items-start">
+          <h3 className="my-2 text-lg font-bold">Revisá tu pedido</h3>
+          <div role="alert" className="alert items-start py-2">
             <span className="text-start text-sm">
               Una vez que envies el pedido te vamos a confirmar la disponibilidad de los productos
               antes de que realices el pago. Gracias!
@@ -119,8 +110,8 @@ export default function CheckoutPage() {
       )}
       {orderSent && (
         <>
-          <h3 className="mb-2 mt-4 text-center text-lg font-bold">Gracias!</h3>
-          <div role="alert" className="alert items-start">
+          <h3 className="my-2 text-center text-lg font-bold">Gracias!</h3>
+          <div role="alert" className="alert my-2 items-start">
             <span className="text-start text-sm">
               Estamos procesando tu pedido y te vamos a contactar pronto para confirmar la
               disponibilidad de los productos y coordinar el pago y la entrega. Gracias!
@@ -129,25 +120,26 @@ export default function CheckoutPage() {
         </>
       )}
       <div className="mt-2 flex flex-col gap-2">
-        {!orderSent && (
+        {!orderSent ? (
           <button
             className="btn btn-neutral btn-block"
             disabled={cartItems.length === 0}
             onClick={handleSendByWhatsApp}
           >
             <WhatsAppIcon className="h-6 w-6" />
-            Enviar por WhatsApp
+            Enviar pedido por WhatsApp
           </button>
+        ) : (
+          <Link
+            href="/checkout/print"
+            className={clsx('btn btn-block', { 'btn-disabled': cartItems.length === 0 })}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ReceiptTextIcon className="h-6 w-6" />
+            Imprimir pedido
+          </Link>
         )}
-        <Link
-          href="/checkout/print"
-          className={clsx('btn btn-block', { 'btn-disabled': cartItems.length === 0 })}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <ReceiptTextIcon className="h-6 w-6" />
-          Imprimir pedido
-        </Link>
         <a href="/" className="btn btn-ghost btn-block">
           <ChevronLeftIcon className="h-6 w-6" />
           Volver

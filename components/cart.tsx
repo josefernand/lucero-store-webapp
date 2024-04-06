@@ -6,11 +6,13 @@ import { ImageIcon, SendIcon, ShoppingBagIcon, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import { ShoppingBagEmptyIcon } from '@/components';
 import { useCart } from '@/context/cart-context';
-import { useEffect } from 'react';
+import { use, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function Cart() {
+  const pathName = usePathname();
   const {
-    state: { items: cartItems, total, count, showCart },
+    state: { items: cartItems, total, count, showCart, sent },
     dispatch
   } = useCart();
 
@@ -53,6 +55,12 @@ export default function Cart() {
       showCartModal();
     }
   }, [showCart]);
+
+  useEffect(() => {
+    if (!pathName.startsWith('/checkout') && sent) {
+      dispatch({ type: ActionType.CLEAR_CART });
+    }
+  }, [pathName, sent, dispatch]);
 
   return (
     <>
