@@ -5,6 +5,7 @@ export interface CartState {
   count: number;
   items: CartItem[];
   total: number;
+  sent: boolean;
   showCart: boolean;
 }
 

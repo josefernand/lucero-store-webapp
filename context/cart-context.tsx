@@ -8,7 +8,9 @@ type Action =
   | { type: ActionType.LOAD_CART; payload: CartState }
   | { type: ActionType.ADD_TO_CART; payload: Product }
   | { type: ActionType.REMOVE_FROM_CART; payload: { id: string } }
-  | { type: ActionType.REMOVE_ALL_FROM_CART; payload: { id: string } };
+  | { type: ActionType.REMOVE_ALL_FROM_CART; payload: { id: string } }
+  | { type: ActionType.CLEAR_CART }
+  | { type: ActionType.SEND_ORDER };
 
 // Define the initial state
 const initialState: CartState = {
@@ -16,6 +18,7 @@ const initialState: CartState = {
   count: 0,
   items: [],
   total: 0,
+  sent: false,
   showCart: false
 };
 
@@ -81,6 +84,12 @@ const cartReducer = (state: CartState, action: Action): CartState => {
         total: state.total - (item ? item.total : 0)
       };
     }
+    case ActionType.CLEAR_CART:
+      console.log('clearing cart');
+      return {
+        ...initialState,
+        loading: false
+      };
     default:
       return state;
   }
