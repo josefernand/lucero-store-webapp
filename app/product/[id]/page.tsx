@@ -1,3 +1,4 @@
+import { CartAddButton } from '@/components';
 import { formatCurrency } from '@/lib/utils';
 import { Product } from '@/ts';
 import { ImageIcon } from 'lucide-react';
@@ -11,7 +12,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 
 export default async function ProductDetail({ params }: { params: { id: string } }) {
   const { id } = params;
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/products/${id}`, {
     cache: 'no-store'
   });
   const product: Product = await res.json();
@@ -43,6 +44,7 @@ export default async function ProductDetail({ params }: { params: { id: string }
             <span className="text-lg font-medium">{formatCurrency(product.price)}</span>
           </div>
           <p>{product.description}</p>
+          <CartAddButton product={product} />
         </div>
       </div>
     </>

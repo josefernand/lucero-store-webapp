@@ -16,7 +16,8 @@ export default function Paywall() {
     modal.showModal();
   }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setLoading(true);
     const res = await fetch(`/api/guests/${tel}`, { cache: 'no-store' });
     const guest: Guest = await res.json();
@@ -45,25 +46,22 @@ export default function Paywall() {
             <span>{error}</span>
           </div>
         )}
-        <div className="form-control gap-4">
-          <input
-            type="tel"
-            placeholder="Número de celular"
-            className="input input-bordered"
-            value={tel}
-            onChange={(e) => setTel(e.target.value)}
-            autoComplete="off"
-          />
-          <button
-            type="button"
-            className="btn btn-neutral"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading && <span className="loading loading-spinner"></span>}
-            Ingresar
-          </button>
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="form-control gap-4">
+            <input
+              type="tel"
+              placeholder="Número de celular"
+              className="input input-bordered"
+              value={tel}
+              onChange={(e) => setTel(e.target.value)}
+              autoComplete="off"
+            />
+            <button type="submit" className="btn btn-neutral" disabled={loading}>
+              {loading && <span className="loading loading-spinner"></span>}
+              Ingresar
+            </button>
+          </div>
+        </form>
       </div>
     </dialog>
   );
