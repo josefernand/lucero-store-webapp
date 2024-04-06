@@ -2,7 +2,6 @@
 
 import { useCart } from '@/context/cart-context';
 import { formatCurrency } from '@/lib/utils';
-import { CartItem } from '@/ts';
 import { useEffect } from 'react';
 
 export default function CheckoutPrintPage() {

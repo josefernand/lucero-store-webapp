@@ -6,10 +6,11 @@ import { ImageIcon, SendIcon, ShoppingBagIcon, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import { ShoppingBagEmptyIcon } from '@/components';
 import { useCart } from '@/context/cart-context';
+import { useEffect } from 'react';
 
 export default function Cart() {
   const {
-    state: { items: cartItems, total, count },
+    state: { items: cartItems, total, count, showCart },
     dispatch
   } = useCart();
 
@@ -34,6 +35,24 @@ export default function Cart() {
   const handleDeleteProduct = (id: string) => {
     dispatch({ type: ActionType.REMOVE_ALL_FROM_CART, payload: { id } });
   };
+
+  useEffect(() => {
+    const modal = document.getElementById('cartModal') as HTMLDialogElement;
+    modal.addEventListener('close', () => {
+      dispatch({ type: ActionType.SHOW_CART, payload: false });
+    });
+    return () => {
+      modal.removeEventListener('close', () => {
+        dispatch({ type: ActionType.SHOW_CART, payload: false });
+      });
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (showCart) {
+      showCartModal();
+    }
+  }, [showCart]);
 
   return (
     <>

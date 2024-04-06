@@ -20,6 +20,7 @@ export default function CartAddButton({ product }: { product: Product }) {
 
   const addToCart = () => {
     dispatch({ type: ActionType.ADD_TO_CART, payload: product });
+    dispatch({ type: ActionType.SHOW_CART, payload: true });
   };
 
   return (

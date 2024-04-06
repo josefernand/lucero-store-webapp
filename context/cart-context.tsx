@@ -10,7 +10,7 @@ type Action =
   | { type: ActionType.REMOVE_FROM_CART; payload: { id: string } }
   | { type: ActionType.REMOVE_ALL_FROM_CART; payload: { id: string } }
   | { type: ActionType.CLEAR_CART }
-  | { type: ActionType.SEND_ORDER };
+  | { type: ActionType.SHOW_CART; payload: boolean };
 
 // Define the initial state
 const initialState: CartState = {
@@ -89,6 +89,11 @@ const cartReducer = (state: CartState, action: Action): CartState => {
       return {
         ...initialState,
         loading: false
+      };
+    case ActionType.SHOW_CART:
+      return {
+        ...state,
+        showCart: action.payload
       };
     default:
       return state;
