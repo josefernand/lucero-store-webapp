@@ -2,16 +2,23 @@
 
 import { useCart } from '@/context/cart-context';
 import { formatCurrency } from '@/lib/utils';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function CheckoutPrintPage() {
+  const [tel, setTel] = useState('No disponible');
+  const [date, setDate] = useState('No disponible');
   const {
     state: { items, total, loading }
   } = useCart();
 
-  const dateTime = new Date().toLocaleString('es-AR');
-  const guest = document.cookie.split('; ').find((row) => row.startsWith('guest='));
-  const tel = guest?.split('=')[1] || 'No disponible';
+  useEffect(() => {
+    const now = new Date();
+    setDate(now.toLocaleDateString() + ' ' + now.toLocaleTimeString());
+    const guest = document && document.cookie.split('; ').find((row) => row.startsWith('guest='));
+    if (guest) {
+      setTel(guest.split('=')[1]);
+    }
+  }, []);
 
   useEffect(() => {
     if (!loading) {
@@ -22,7 +29,7 @@ export default function CheckoutPrintPage() {
 
   return (
     <div className="container mx-auto max-w-3xl px-4">
-      <p className="text-center text-sm text-gray-500">Fecha: {dateTime}</p>
+      <p className="text-center text-sm text-gray-500">Fecha: {date}</p>
       <p className="text-center text-sm text-gray-500">Telefono: {tel}</p>
       <h1 className="my-4 font-semibold">Pedido</h1>
 
