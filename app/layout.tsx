@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import clsx from 'clsx';
-import { Footer, Navbar } from '@/components';
-import './globals.css';
-import Paywall from '@/components/paywall';
+import { Paywall } from '@/components';
 import { cookies } from 'next/headers';
 import { Guest } from '@/ts';
+import './globals.css';
+import { CartProvider } from '@/context/cart-context';
 
 export const metadata: Metadata = {
   title: {
@@ -29,13 +29,10 @@ export default async function RootLayout({
     const guest: Guest = await res.json();
     displayPaywall = !guest.enabled;
   }
-
   return (
     <html lang="en">
       <body className={clsx(GeistSans.className, 'flex min-h-screen flex-col')}>
-        <Navbar />
-        <main className="container mx-auto max-w-3xl flex-1 px-4 pb-12">{children}</main>
-        <Footer />
+        <CartProvider>{children}</CartProvider>
         {displayPaywall && <Paywall />}
       </body>
     </html>
