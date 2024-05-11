@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ProductsResponse, Product, Material } from '@/ts';
-import { formatCurrency } from '@/lib/utils';
+import { capitalize, formatCurrency } from '@/lib/utils';
 import Image from 'next/image';
 import { GemIcon, ImageIcon } from 'lucide-react';
 import clsx from 'clsx';
@@ -39,21 +39,17 @@ export default async function Home() {
                       <ImageIcon className="h-12 w-12" />
                     </div>
                   )}
-                  {product.material && (
-                    <span
-                      className={clsx(
-                        'badge badge-ghost absolute left-2 top-2 text-xs capitalize',
-                        {
-                          'bg-neutral-300': product.material === Material.STEEL
-                        }
-                      )}
-                    >
-                      {product.material}
-                    </span>
+                  {product.isNew && (
+                    <div className="badge badge-neutral absolute left-2 top-2 text-xs">Nuevo</div>
                   )}
                 </figure>
-                <div className="flex flex-1 flex-col justify-between gap-0 p-3">
-                  <p className="line-clamp-2 text-sm font-semibold">{product.name}</p>
+                <div className="flex flex-1 flex-col gap-0 p-3">
+                  {product.material && (
+                    <span className="text-xs text-base-content text-opacity-50">
+                      {capitalize(product.material)}
+                    </span>
+                  )}
+                  <p className="mb-auto line-clamp-2 text-sm font-semibold">{product.name}</p>
                   <span className="mt-1 text-sm">{formatCurrency(product.price)}</span>
                 </div>
                 <div className="absolute h-full w-full bg-neutral bg-opacity-0 group-hover:bg-opacity-10"></div>

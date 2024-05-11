@@ -13,6 +13,7 @@ export interface Product {
   supplierId?: string;
   supplierProductId?: string;
   available: boolean;
+  isNew: boolean;
   created?: Date;
   updated?: Date;
 }
