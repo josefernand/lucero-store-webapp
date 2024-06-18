@@ -4,12 +4,10 @@ import { capitalize } from '@/lib/utils';
 import { Material, ProductType } from '@/ts';
 import { Settings2Icon } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function Filter() {
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const [count, setCount] = useState(0);
@@ -31,10 +29,14 @@ export default function Filter() {
     const material = searchParams.get('material');
     if (material) {
       setMaterial(material as Material);
+    } else {
+      setMaterial(null);
     }
     const productType = searchParams.get('productType');
     if (productType) {
       setProductType(productType as ProductType);
+    } else {
+      setProductType(null);
     }
   }, [searchParams]);
 

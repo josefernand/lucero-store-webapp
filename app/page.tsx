@@ -66,9 +66,16 @@ export default async function Home({ searchParams }: { searchParams: ProductSear
         ) : (
           <div role="alert" className="alert">
             <GemIcon className="h-6 w-6" />
-            <span>
-              Oops! Parece que este catalogo aún no tiene nada. Es hora de mostrar nuestro brillo!
-            </span>
+            {urlSearchParams.size > 0 ? (
+              <span>
+                No hay productos que coincidan con los filtros seleccionados.{' '}
+                <Link className="underline" href="/">
+                  Ver todos
+                </Link>
+              </span>
+            ) : (
+              <span>Oops! Parece que este catalogo aún no tiene nada.</span>
+            )}
           </div>
         )}
       </main>
