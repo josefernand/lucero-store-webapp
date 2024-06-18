@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import { Guest } from '@/ts';
 import './globals.css';
 import { CartProvider } from '@/context/cart-context';
+import NextTopLoader from 'nextjs-toploader';
 
 export const metadata: Metadata = {
   title: {
@@ -29,9 +30,11 @@ export default async function RootLayout({
     const guest: Guest = await res.json();
     displayPaywall = !guest.enabled;
   }
+  displayPaywall = displayPaywall && !process.env.DISABLE_PAYWALL;
   return (
     <html lang="en">
       <body className={clsx(GeistSans.className, 'flex min-h-screen flex-col')}>
+        <NextTopLoader showSpinner={false} color="oklch(var(--n))" shadow={false} />
         <CartProvider>{children}</CartProvider>
         {displayPaywall && <Paywall />}
       </body>
