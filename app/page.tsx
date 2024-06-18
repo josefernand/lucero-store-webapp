@@ -1,22 +1,29 @@
 import Link from 'next/link';
-import { ProductsResponse, Product, Material } from '@/ts';
+import { ProductsResponse, Product, ProductSearchParams } from '@/ts';
 import { capitalize, formatCurrency } from '@/lib/utils';
 import Image from 'next/image';
 import { GemIcon, ImageIcon } from 'lucide-react';
-import clsx from 'clsx';
-import { Footer, Navbar } from '@/components';
+import { Filter, Footer, Navbar } from '@/components';
 
-export default async function Home() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/products`, {
-    cache: 'no-store'
-  });
+export default async function Home({ searchParams }: { searchParams: ProductSearchParams }) {
+  const urlSearchParams = new URLSearchParams();
+  const productValidFilters = ['material', 'productType'];
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (value && productValidFilters.includes(key)) {
+      urlSearchParams.set(key, value);
+    }
+  }
+  const fetchUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/products?${urlSearchParams.toString()}`;
+  const res = await fetch(fetchUrl, { cache: 'no-store' });
   const jsonRes: ProductsResponse = await res.json();
   const products: Product[] = jsonRes.products || [];
 
   return (
     <>
-      <Navbar />
-      <main className="container mx-auto max-w-3xl flex-1 px-4 pb-12">
+      <div className="fixed top-0 z-10 w-full">
+        <Navbar />
+      </div>
+      <main className="container mx-auto max-w-3xl flex-1 px-4 pb-12 pt-16">
         {products.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {products.map((product) => (
@@ -59,12 +66,24 @@ export default async function Home() {
         ) : (
           <div role="alert" className="alert">
             <GemIcon className="h-6 w-6" />
-            <span>
-              Oops! Parece que este catalogo aún no tiene nada. Es hora de mostrar nuestro brillo!
-            </span>
+            {urlSearchParams.size > 0 ? (
+              <span>
+                No hay productos que coincidan con los filtros seleccionados.{' '}
+                <Link className="underline" href="/">
+                  Ver todos
+                </Link>
+              </span>
+            ) : (
+              <span>Oops! Parece que este catalogo aún no tiene nada.</span>
+            )}
           </div>
         )}
       </main>
+      <div className="fixed bottom-8 flex w-full justify-center">
+        <div className="join rounded-full">
+          <Filter />
+        </div>
+      </div>
       <Footer />
     </>
   );

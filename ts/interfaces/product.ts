@@ -17,3 +17,8 @@ export interface Product {
   created?: Date;
   updated?: Date;
 }
+
+export interface ProductSearchParams {
+  material?: string;
+  productType?: string;
+}
