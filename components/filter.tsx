@@ -77,7 +77,7 @@ export default function Filter() {
   return (
     <>
       <button
-        className="btn rounded-full border border-base-content hover:border-base-content"
+        className="btn rounded-full border border-base-content shadow-md hover:border-base-content"
         onClick={showFilterModal}
       >
         {count > 0 ? (
