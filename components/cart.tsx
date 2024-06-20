@@ -6,8 +6,9 @@ import { ImageIcon, SendIcon, ShoppingBagIcon, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import { ShoppingBagEmptyIcon } from '@/components';
 import { useCart } from '@/context/cart-context';
-import { use, useEffect } from 'react';
+import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Cart() {
   const pathName = usePathname();
@@ -85,21 +86,23 @@ export default function Cart() {
                 {cartItems.map((item) => (
                   <div key={item.product.id} className="flex gap-4">
                     <div className="relative">
-                      <figure className="flex aspect-square h-20 items-center justify-center overflow-hidden rounded-lg border border-neutral-300">
-                        {item.product.imageUrls && item.product.imageUrls.length > 0 ? (
-                          <Image
-                            src={item.product.imageUrls?.[0]}
-                            width={120}
-                            height={120}
-                            alt={item.product.name}
-                            priority
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center bg-base-200 text-base-content text-opacity-10">
-                            <ImageIcon className="h-12 w-12" />
-                          </div>
-                        )}
-                      </figure>
+                      <Link href={`/product/${item.product.id}`} onClick={closeCartModal}>
+                        <figure className="flex aspect-square h-20 items-center justify-center overflow-hidden rounded-lg border border-neutral-300">
+                          {item.product.imageUrls && item.product.imageUrls.length > 0 ? (
+                            <Image
+                              src={item.product.imageUrls?.[0]}
+                              width={120}
+                              height={120}
+                              alt={item.product.name}
+                              priority
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-base-200 text-base-content text-opacity-10">
+                              <ImageIcon className="h-12 w-12" />
+                            </div>
+                          )}
+                        </figure>
+                      </Link>
                       <button
                         className="btn btn-circle btn-neutral btn-xs absolute -right-2 -top-2"
                         onClick={() => handleDeleteProduct(item.product.id)}
@@ -108,9 +111,11 @@ export default function Cart() {
                       </button>
                     </div>
                     <div className="mr-auto flex flex-col gap-1">
-                      <span className="line-clamp-2 text-sm font-semibold sm:text-base">
-                        {item.product.name}
-                      </span>
+                      <Link href={`/product/${item.product.id}`} onClick={closeCartModal}>
+                        <span className="line-clamp-2 text-sm font-semibold sm:text-base">
+                          {item.product.name}
+                        </span>
+                      </Link>
                       <div className="flex items-baseline self-start rounded-full border">
                         <button
                           className="rounded-l-full border-r px-2 hover:bg-neutral-200 disabled:opacity-50"

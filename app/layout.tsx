@@ -7,6 +7,7 @@ import { Guest } from '@/ts';
 import './globals.css';
 import { CartProvider } from '@/context/cart-context';
 import NextTopLoader from 'nextjs-toploader';
+import { headers } from '@/lib/auth';
 
 export const metadata: Metadata = {
   title: {
@@ -25,7 +26,8 @@ export default async function RootLayout({
   const cookie = cookies().get('guest');
   if (cookie?.value) {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/guests/${cookie.value}`, {
-      cache: 'no-store'
+      cache: 'no-store',
+      headers
     });
     const guest: Guest = await res.json();
     displayPaywall = !guest.enabled;
