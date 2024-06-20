@@ -2,6 +2,7 @@
 
 import { Guest } from '@/ts';
 import { useEffect, useState } from 'react';
+import { headers } from '@/lib/auth';
 
 export default function Paywall() {
   const [tel, setTel] = useState('');
@@ -19,7 +20,7 @@ export default function Paywall() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
-    const res = await fetch(`/api/guests/${tel}`, { cache: 'no-store' });
+    const res = await fetch(`/api/guests/${tel}`, { cache: 'no-store', headers });
     const guest: Guest = await res.json();
     if (!guest || !guest.enabled) {
       setError('El número de celular que ingresaste aún no tiene acceso a la tienda.');

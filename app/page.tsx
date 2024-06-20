@@ -4,6 +4,7 @@ import { capitalize, formatCurrency } from '@/lib/utils';
 import Image from 'next/image';
 import { GemIcon, ImageIcon } from 'lucide-react';
 import { Filter, Footer, Navbar } from '@/components';
+import { headers } from '@/lib/auth';
 
 export default async function Home({ searchParams }: { searchParams: ProductSearchParams }) {
   const urlSearchParams = new URLSearchParams();
@@ -14,7 +15,7 @@ export default async function Home({ searchParams }: { searchParams: ProductSear
     }
   }
   const fetchUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/products?${urlSearchParams.toString()}`;
-  const res = await fetch(fetchUrl, { cache: 'no-store' });
+  const res = await fetch(fetchUrl, { cache: 'no-store', headers });
   const jsonRes: ProductsResponse = await res.json();
   const products: Product[] = jsonRes.products || [];
 
