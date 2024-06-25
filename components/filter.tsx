@@ -88,97 +88,107 @@ export default function Filter() {
         {count > 0 ? 'Filtros' : 'Filtrar'}
       </button>
       <dialog id="filterModal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box">
+        <div className="modal-box h-screen p-0 sm:h-auto">
           <button
             className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
             onClick={closeFilterModal}
           >
             ✕
           </button>
-          <h3 className="mb-4 text-lg font-bold">Filtrar</h3>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <h4 className="mb-2 font-bold">Material</h4>
-              <div className="form-control mb-2">
-                <label htmlFor="material-all" className="flex cursor-pointer items-center gap-2">
-                  <input
-                    type="radio"
-                    name="material"
-                    id="material-all"
-                    className="radio"
-                    checked={material === null}
-                    onChange={() => setMaterial(null)}
-                  />
-                  <span className="label-text pt-0.5">Todos</span>
-                </label>
-              </div>
-              {Object.values(Material).map((item) => (
-                <div className="form-control mb-2" key={item}>
-                  <label
-                    htmlFor={`material-${item}`}
-                    className="flex cursor-pointer items-center gap-2"
-                  >
-                    <input
-                      type="radio"
-                      name="material"
-                      id={`material-${item}`}
-                      className="radio"
-                      checked={item === material}
-                      onChange={() => setMaterial(item)}
-                    />
-                    <span className="label-text pt-0.5">{capitalize(item)}</span>
-                  </label>
+          <div className="flex h-full flex-col">
+            <h3 className="m-0 border-b p-6 pb-4 text-lg font-bold sm:border-none">Filtrar</h3>
+            <div className="flex-1 overflow-auto px-6 py-4 sm:py-0">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <h4 className="mb-2 font-bold">Material</h4>
+                  <div className="form-control mb-2">
+                    <label
+                      htmlFor="material-all"
+                      className="flex cursor-pointer items-center gap-2"
+                    >
+                      <input
+                        type="radio"
+                        name="material"
+                        id="material-all"
+                        className="radio"
+                        checked={material === null}
+                        onChange={() => setMaterial(null)}
+                      />
+                      <span className="label-text pt-0.5">Todos</span>
+                    </label>
+                  </div>
+                  {Object.values(Material).map((item) => (
+                    <div className="form-control mb-2" key={item}>
+                      <label
+                        htmlFor={`material-${item}`}
+                        className="flex cursor-pointer items-center gap-2"
+                      >
+                        <input
+                          type="radio"
+                          name="material"
+                          id={`material-${item}`}
+                          className="radio"
+                          checked={item === material}
+                          onChange={() => setMaterial(item)}
+                        />
+                        <span className="label-text pt-0.5">{capitalize(item)}</span>
+                      </label>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <div>
-              <h4 className="mb-2 font-bold">Tipo</h4>
-              <div className="form-control mb-2">
-                <label htmlFor="productType-all" className="flex cursor-pointer items-center gap-2">
-                  <input
-                    type="radio"
-                    name="productType"
-                    id="productType-all"
-                    className="radio"
-                    checked={productType === null}
-                    onChange={() => setProductType(null)}
-                  />
-                  <span className="label-text pt-0.5">Todos</span>
-                </label>
-              </div>
-              {Object.values(ProductType).map((item) => (
-                <div className="form-control mb-2" key={item}>
-                  <label
-                    htmlFor={`productType-${item}`}
-                    className="flex cursor-pointer items-center gap-2"
-                  >
-                    <input
-                      type="radio"
-                      name="productType"
-                      id={`productType-${item}`}
-                      className="radio"
-                      checked={item === productType}
-                      onChange={() => setProductType(item)}
-                    />
-                    <span className="label-text pt-0.5">{capitalize(item)}</span>
-                  </label>
+                <div>
+                  <h4 className="mb-2 font-bold">Tipo</h4>
+                  <div className="form-control mb-2">
+                    <label
+                      htmlFor="productType-all"
+                      className="flex cursor-pointer items-center gap-2"
+                    >
+                      <input
+                        type="radio"
+                        name="productType"
+                        id="productType-all"
+                        className="radio"
+                        checked={productType === null}
+                        onChange={() => setProductType(null)}
+                      />
+                      <span className="label-text pt-0.5">Todos</span>
+                    </label>
+                  </div>
+                  {Object.values(ProductType).map((item) => (
+                    <div className="form-control mb-2" key={item}>
+                      <label
+                        htmlFor={`productType-${item}`}
+                        className="flex cursor-pointer items-center gap-2"
+                      >
+                        <input
+                          type="radio"
+                          name="productType"
+                          id={`productType-${item}`}
+                          className="radio"
+                          checked={item === productType}
+                          onChange={() => setProductType(item)}
+                        />
+                        <span className="label-text pt-0.5">{capitalize(item)}</span>
+                      </label>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
-          <div className="modal-action">
-            <Link role="button" className="btn" href="/" onClick={onClear} scroll={false}>
-              Limpiar
-            </Link>
-            <Link
-              role="button"
-              className="btn btn-neutral"
-              href={`/?${filterQueryString}`}
-              onClick={onApply}
-              scroll={false}
-            >
-              Aplicar
-            </Link>
+            <div className="modal-action m-0 border-t p-6 pt-4 sm:border-none">
+              <Link role="button" className="btn" href="/" onClick={onClear} scroll={false}>
+                Limpiar
+              </Link>
+              <Link
+                role="button"
+                className="btn btn-neutral"
+                href={`/?${filterQueryString}`}
+                onClick={onApply}
+                scroll={false}
+              >
+                Aplicar
+              </Link>
+            </div>
           </div>
         </div>
         <form method="dialog" className="modal-backdrop">
