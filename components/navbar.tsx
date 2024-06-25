@@ -10,9 +10,11 @@ import { useState } from 'react';
 export default function Navbar({ showCart = true }: { showCart?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
 
-  window.onscroll = () => {
-    setScrolled(window.scrollY > 10);
-  };
+  if (typeof window !== 'undefined') {
+    window.onscroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+  }
 
   return (
     <div
